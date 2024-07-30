@@ -16,19 +16,11 @@ interface Transaction {
   quantity: number;
 }
 
-const CURRENCIES = {
-  USD: 5.14,
-  GBP: 4,
-  CAD: 7.11,
-  EUR: 4.99,
-};
-
 const App: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [result, setResult] = useState<number | null>(null);
   const [mode, setMode] = useState<"pnl" | "price">("pnl");
-  const [currency, setCurrency] = useState<keyof typeof CURRENCIES>("USD");
 
   useEffect(() => {
     fetch("https://tc-api.serversia.com/items")
@@ -92,9 +84,6 @@ const App: React.FC = () => {
     }
   };
 
-  const resultInCurrency =
-    result !== null ? (result * CURRENCIES[currency]).toFixed(2) : null;
-
   return (
     <div className="App">
       <h1>Habbo Furni Calculator</h1>
@@ -116,23 +105,6 @@ const App: React.FC = () => {
             onChange={() => setMode("price")}
           />
           Calculate Price
-        </label>
-      </div>
-      <div className="currency-selector">
-        <label>
-          Currency:
-          <select
-            value={currency}
-            onChange={(e) =>
-              setCurrency(e.target.value as keyof typeof CURRENCIES)
-            }
-          >
-            {Object.keys(CURRENCIES).map((cur) => (
-              <option key={cur} value={cur}>
-                {cur}
-              </option>
-            ))}
-          </select>
         </label>
       </div>
       {transactions.map((transaction, index) => (
@@ -186,10 +158,15 @@ const App: React.FC = () => {
       <button onClick={clearTransactions}>Clear List</button>
       {result !== null && (
         <h2>
-          Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC (
-          {resultInCurrency} {currency})
+          Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
         </h2>
       )}
+      <footer>
+        <p>
+          Prices calculated based on{" "}
+          <a href="https://traderclub.gg/">TraderClub.gg</a>
+        </p>
+      </footer>
     </div>
   );
 };
