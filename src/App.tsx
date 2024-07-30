@@ -29,6 +29,37 @@ const App: React.FC = () => {
       .then((data) => setItems(data));
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
+    script.async = true;
+
+    script.onload = () => {
+      try {
+        if (window.kofiWidgetOverlay) {
+          window.kofiWidgetOverlay.draw("lugas", {
+            type: "floating-chat",
+            "floating-chat.donateButton.text": "Support me",
+            "floating-chat.donateButton.background-color": "#00b9fe",
+            "floating-chat.donateButton.text-color": "#fff",
+          });
+        }
+      } catch (error) {
+        console.error("Error loading Ko-fi widget:", error);
+      }
+    };
+
+    script.onerror = (error) => {
+      console.error("Script load error:", error);
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const handleAddTransaction = () => {
     setTransactions([...transactions, { item: "", type: "lost", quantity: 0 }]);
   };
@@ -164,6 +195,9 @@ const App: React.FC = () => {
           Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
         </h2>
       )}
+      <p className="eth-donations">
+        ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
+      </p>
       <footer>
         <p>
           Prices calculated based on{" "}
