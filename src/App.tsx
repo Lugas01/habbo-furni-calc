@@ -187,7 +187,7 @@ const App: React.FC = () => {
           </div>
         </div>
       ))}
-      <button onClick={handleAddTransaction}>Add Another Item</button>
+      <button onClick={handleAddTransaction}>Add Item</button>
       <button onClick={calculate}>Calculate</button>
       <button onClick={clearTransactions}>Clear List</button>
       {result !== null && (
