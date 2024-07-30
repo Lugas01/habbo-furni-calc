@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import DefaultImage from "./Images/TicketBox.png"; // Import the default image
+import DefaultImage from "./Images/TicketBox.png";
+import Logo from "./Images/lugas.png"; // Import the logo
 
 interface Item {
   id: number;
@@ -86,6 +87,8 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <img src={Logo} alt="Logo" className="logo" />
+      <p className="made-by">Made by Lugas</p>
       <h1>Habbo Furni Calculator</h1>
       <div>
         <label>
