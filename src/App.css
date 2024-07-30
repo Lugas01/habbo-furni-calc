@@ -7,6 +7,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow-y: auto; /* Make the body scrollable */
 }
 
 .App {
@@ -14,10 +15,24 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  max-width: 600px;
+  max-width: 1200px; /* Increase the width to make it wider */
+  min-width: 1000px; /* Set a minimum width to ensure it stays wide */
   width: 100%;
   text-align: center;
   margin: 20px;
+  min-height: 800px; /* Set a minimum height to prevent resizing */
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.transaction-list {
+  max-height: 400px; /* Set a max height for the transaction list */
+  overflow-y: auto; /* Make the transaction list scrollable */
+  margin-top: 20px; /* Add some space between the buttons and the transaction list */
 }
 
 .transaction {
@@ -32,8 +47,11 @@ body {
   margin: 0 10px;
 }
 
-button {
-  margin: 10px;
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px; /* Add some space between the mode select and buttons */
 }
 
 .currency-selector {
@@ -45,15 +63,14 @@ button {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  max-width: 50px;
-  max-height: 50px;
-  width: 100%;
+  width: 50px; /* Set fixed width */
+  height: 50px; /* Set fixed height */
 }
 
 .item-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  width: 100%; /* Ensure image fits the container */
+  height: 100%; /* Ensure image fits the container */
+  object-fit: contain; /* Maintain aspect ratio and fit within the container */
 }
 
 .logo {
@@ -62,18 +79,20 @@ button {
 }
 
 .made-by {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   font-size: 16px;
   color: #555;
+}
+
+.eth-donations {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #333;
 }
 
 h1 {
   font-size: 24px;
   margin-bottom: 20px;
-}
-
-.transaction {
-  margin: 20px 0;
 }
 
 label {
@@ -124,15 +143,14 @@ footer a:hover {
   text-decoration: underline;
 }
 
-.eth-donations {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #333;
-}
-
 .bets-list {
   margin-top: 20px;
   text-align: left;
+}
+
+.bets-list-content {
+  max-height: 300px; /* Set a max height for the bets list */
+  overflow-y: auto; /* Make the bets list scrollable */
 }
 
 .bet {
@@ -175,6 +193,20 @@ footer a:hover {
 }
 
 .remove-bet:hover {
+  background-color: #c82333;
+}
+
+.remove-all-bets {
+  background-color: #dc3545;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.remove-all-bets:hover {
   background-color: #c82333;
 }
 

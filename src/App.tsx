@@ -67,6 +67,17 @@ const App: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const savedBets = localStorage.getItem("bets");
+    if (savedBets) {
+      setBets(JSON.parse(savedBets));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("bets", JSON.stringify(bets));
+  }, [bets]);
+
   const handleAddTransaction = () => {
     setTransactions([...transactions, { item: "", type: "lost", quantity: 0 }]);
   };
@@ -135,14 +146,19 @@ const App: React.FC = () => {
   };
 
   const saveBet = () => {
-    if (transactions.length > 0) {
+    const validTransactions = transactions.filter(
+      (t) => t.item !== "" && t.quantity > 0
+    );
+    if (validTransactions.length > 0) {
       const newBet: Bet = {
         id: Date.now(),
-        transactions: [...transactions],
-        result: calculateResult(transactions, mode),
+        transactions: validTransactions,
+        result: calculateResult(validTransactions, mode),
       };
       setBets([...bets, newBet]);
       clearTransactions(false);
+    } else {
+      alert("Please add valid items and quantities before saving.");
     }
   };
 
@@ -150,83 +166,98 @@ const App: React.FC = () => {
     setBets(bets.filter((bet) => bet.id !== id));
   };
 
+  const removeAllBets = () => {
+    if (window.confirm("Are you sure you want to remove all bets?")) {
+      setBets([]);
+    }
+  };
+
   const totalBetHC = bets.reduce((acc, bet) => acc + bet.result, 0);
 
   return (
     <div className="App">
-      <img src={Logo} alt="Logo" className="logo" />
-      <p className="made-by">Made by Lugas</p>
-      <h1>{mode === "pnl" ? "Calculate PnL" : "Calculate Price"}</h1>
-      <div>
-        <label>
-          <input
-            type="radio"
-            value="pnl"
-            checked={mode === "pnl"}
-            onChange={() => setMode("pnl")}
-          />
-          Calculate PnL
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="price"
-            checked={mode === "price"}
-            onChange={() => setMode("price")}
-          />
-          Calculate Price
-        </label>
-      </div>
-      {transactions.map((transaction, index) => (
-        <div key={index} className="transaction">
-          <select
-            value={transaction.item}
-            onChange={(e) => handleChange(index, "item", e.target.value)}
-          >
-            <option value="" disabled>
-              Select item
-            </option>
-            {items.map((item) => (
-              <option key={item.id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-          {mode === "pnl" && (
-            <select
-              value={transaction.type || "lost"}
-              onChange={(e) => handleChange(index, "type", e.target.value)}
-            >
-              <option value="lost">Lost</option>
-              <option value="won">Won</option>
-            </select>
-          )}
-          <input
-            type="number"
-            value={transaction.quantity}
-            onChange={(e) =>
-              handleChange(index, "quantity", parseInt(e.target.value) || 0)
-            }
-            placeholder="Quantity"
-          />
-          <div className="image-container">
-            <img
-              src={
-                transaction.item
-                  ? items.find((item) => item.name === transaction.item)
-                      ?.image || DefaultImage
-                  : DefaultImage
-              }
-              alt={transaction.item}
-              className="item-image"
+      <header>
+        <img src={Logo} alt="Logo" className="logo" />
+        <p className="made-by">Made by Lugas</p>
+        <p className="eth-donations">
+          ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
+        </p>
+        <h1>{mode === "pnl" ? "Calculate PnL" : "Calculate Price"}</h1>
+        <div className="mode-select">
+          <label>
+            <input
+              type="radio"
+              value="pnl"
+              checked={mode === "pnl"}
+              onChange={() => setMode("pnl")}
             />
-          </div>
+            Calculate PnL
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="price"
+              checked={mode === "price"}
+              onChange={() => setMode("price")}
+            />
+            Calculate Price
+          </label>
         </div>
-      ))}
-      <button onClick={handleAddTransaction}>Add Item</button>
-      <button onClick={calculate}>Calculate</button>
-      <button onClick={() => clearTransactions(true)}>Clear List</button>
-      {mode === "pnl" && <button onClick={saveBet}>Save Bet</button>}
+        <div className="buttons">
+          <button onClick={handleAddTransaction}>Add Item</button>
+          <button onClick={calculate}>Calculate</button>
+          <button onClick={() => clearTransactions(true)}>Clear List</button>
+          {mode === "pnl" && <button onClick={saveBet}>Save Bet</button>}
+        </div>
+      </header>
+      <div className="transaction-list">
+        {transactions.map((transaction, index) => (
+          <div key={index} className="transaction">
+            <select
+              value={transaction.item}
+              onChange={(e) => handleChange(index, "item", e.target.value)}
+            >
+              <option value="" disabled>
+                Select item
+              </option>
+              {items.map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            {mode === "pnl" && (
+              <select
+                value={transaction.type || "lost"}
+                onChange={(e) => handleChange(index, "type", e.target.value)}
+              >
+                <option value="lost">Lost</option>
+                <option value="won">Won</option>
+              </select>
+            )}
+            <input
+              type="number"
+              value={transaction.quantity}
+              onChange={(e) =>
+                handleChange(index, "quantity", parseInt(e.target.value) || 0)
+              }
+              placeholder="Quantity"
+            />
+            <div className="image-container">
+              <img
+                src={
+                  transaction.item
+                    ? items.find((item) => item.name === transaction.item)
+                        ?.image || DefaultImage
+                    : DefaultImage
+                }
+                alt={transaction.item}
+                className="item-image"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
       {result !== null && (
         <h2>
           Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
@@ -235,33 +266,40 @@ const App: React.FC = () => {
       {mode === "pnl" && (
         <div className="bets-list">
           <h3>Saved Bets</h3>
-          {bets.map((bet) => (
-            <div key={bet.id} className="bet">
-              <div className="bet-info">
-                <h4>Bet ID: {bet.id}</h4>
-                <p>Result: {bet.result.toFixed(2)} HC</p>
+          <div className="bets-list-content">
+            {bets.map((bet) => (
+              <div key={bet.id} className="bet">
+                <div className="bet-info">
+                  <h4>Bet ID: {bet.id}</h4>
+                  <p>Result: {bet.result.toFixed(2)} HC</p>
+                  <ul>
+                    {bet.transactions.map((transaction, index) => (
+                      <li key={index}>
+                        {transaction.quantity} x {transaction.item} (
+                        {transaction.type})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <button
+                  className="remove-bet"
+                  onClick={() => removeBet(bet.id)}
+                >
+                  Remove
+                </button>
               </div>
-              <button className="remove-bet" onClick={() => removeBet(bet.id)}>
-                Remove
-              </button>
-              <ul>
-                {bet.transactions.map((transaction, index) => (
-                  <li key={index}>
-                    {transaction.quantity} x {transaction.item} (
-                    {transaction.type})
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </div>
           <div className="total-hc">
             <h4>Total HC: {totalBetHC.toFixed(2)} HC</h4>
           </div>
+          {bets.length > 0 && (
+            <button className="remove-all-bets" onClick={removeAllBets}>
+              Remove All Bets
+            </button>
+          )}
         </div>
       )}
-      <p className="eth-donations">
-        ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
-      </p>
       <footer>
         <p>
           Prices calculated based on{" "}
