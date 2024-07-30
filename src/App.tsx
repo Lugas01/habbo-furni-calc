@@ -156,7 +156,7 @@ const App: React.FC = () => {
     <div className="App">
       <img src={Logo} alt="Logo" className="logo" />
       <p className="made-by">Made by Lugas</p>
-      <h1>Habbo Furni Calculator</h1>
+      <h1>{mode === "pnl" ? "Calculate PnL" : "Calculate Price"}</h1>
       <div>
         <label>
           <input
@@ -226,37 +226,39 @@ const App: React.FC = () => {
       <button onClick={handleAddTransaction}>Add Item</button>
       <button onClick={calculate}>Calculate</button>
       <button onClick={() => clearTransactions(true)}>Clear List</button>
-      <button onClick={saveBet}>Save Bet</button>
+      {mode === "pnl" && <button onClick={saveBet}>Save Bet</button>}
       {result !== null && (
         <h2>
           Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
         </h2>
       )}
-      <div className="bets-list">
-        <h3>Saved Bets</h3>
-        {bets.map((bet) => (
-          <div key={bet.id} className="bet">
-            <div className="bet-info">
-              <h4>Bet ID: {bet.id}</h4>
-              <p>Result: {bet.result.toFixed(2)} HC</p>
+      {mode === "pnl" && (
+        <div className="bets-list">
+          <h3>Saved Bets</h3>
+          {bets.map((bet) => (
+            <div key={bet.id} className="bet">
+              <div className="bet-info">
+                <h4>Bet ID: {bet.id}</h4>
+                <p>Result: {bet.result.toFixed(2)} HC</p>
+              </div>
+              <button className="remove-bet" onClick={() => removeBet(bet.id)}>
+                Remove
+              </button>
+              <ul>
+                {bet.transactions.map((transaction, index) => (
+                  <li key={index}>
+                    {transaction.quantity} x {transaction.item} (
+                    {transaction.type})
+                  </li>
+                ))}
+              </ul>
             </div>
-            <button className="remove-bet" onClick={() => removeBet(bet.id)}>
-              Remove
-            </button>
-            <ul>
-              {bet.transactions.map((transaction, index) => (
-                <li key={index}>
-                  {transaction.quantity} x {transaction.item} (
-                  {transaction.type})
-                </li>
-              ))}
-            </ul>
+          ))}
+          <div className="total-hc">
+            <h4>Total HC: {totalBetHC.toFixed(2)} HC</h4>
           </div>
-        ))}
-        <div className="total-hc">
-          <h4>Total HC: {totalBetHC.toFixed(2)} HC</h4>
         </div>
-      </div>
+      )}
       <p className="eth-donations">
         ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
       </p>
