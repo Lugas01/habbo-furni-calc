@@ -123,3 +123,9 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
+
+.eth-donations {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333;
+}
