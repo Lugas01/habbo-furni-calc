@@ -17,11 +17,18 @@ interface Transaction {
   quantity: number;
 }
 
+interface Bet {
+  id: number;
+  transactions: Transaction[];
+  result: number;
+}
+
 const App: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [result, setResult] = useState<number | null>(null);
   const [mode, setMode] = useState<"pnl" | "price">("pnl");
+  const [bets, setBets] = useState<Bet[]>([]);
 
   useEffect(() => {
     fetch("https://tc-api.serversia.com/items")
@@ -75,7 +82,10 @@ const App: React.FC = () => {
     setTransactions(updatedTransactions);
   };
 
-  const calculate = () => {
+  const calculateResult = (
+    transactions: Transaction[],
+    mode: "pnl" | "price"
+  ) => {
     let hcResult: number;
     if (mode === "pnl") {
       const totalLoss = transactions
@@ -106,15 +116,41 @@ const App: React.FC = () => {
         0
       );
     }
-    setResult(parseFloat(hcResult.toFixed(2)));
+    return parseFloat(hcResult.toFixed(2));
   };
 
-  const clearTransactions = () => {
-    if (window.confirm("Are you sure you want to clear your list?")) {
-      setTransactions([]);
-      setResult(null);
+  const calculate = () => {
+    setResult(calculateResult(transactions, mode));
+  };
+
+  const clearTransactions = (confirm: boolean = true) => {
+    if (
+      confirm &&
+      !window.confirm("Are you sure you want to clear your list?")
+    ) {
+      return;
+    }
+    setTransactions([]);
+    setResult(null);
+  };
+
+  const saveBet = () => {
+    if (transactions.length > 0) {
+      const newBet: Bet = {
+        id: Date.now(),
+        transactions: [...transactions],
+        result: calculateResult(transactions, mode),
+      };
+      setBets([...bets, newBet]);
+      clearTransactions(false);
     }
   };
+
+  const removeBet = (id: number) => {
+    setBets(bets.filter((bet) => bet.id !== id));
+  };
+
+  const totalBetHC = bets.reduce((acc, bet) => acc + bet.result, 0);
 
   return (
     <div className="App">
@@ -189,12 +225,38 @@ const App: React.FC = () => {
       ))}
       <button onClick={handleAddTransaction}>Add Item</button>
       <button onClick={calculate}>Calculate</button>
-      <button onClick={clearTransactions}>Clear List</button>
+      <button onClick={() => clearTransactions(true)}>Clear List</button>
+      <button onClick={saveBet}>Save Bet</button>
       {result !== null && (
         <h2>
           Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
         </h2>
       )}
+      <div className="bets-list">
+        <h3>Saved Bets</h3>
+        {bets.map((bet) => (
+          <div key={bet.id} className="bet">
+            <div className="bet-info">
+              <h4>Bet ID: {bet.id}</h4>
+              <p>Result: {bet.result.toFixed(2)} HC</p>
+            </div>
+            <button className="remove-bet" onClick={() => removeBet(bet.id)}>
+              Remove
+            </button>
+            <ul>
+              {bet.transactions.map((transaction, index) => (
+                <li key={index}>
+                  {transaction.quantity} x {transaction.item} (
+                  {transaction.type})
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <div className="total-hc">
+          <h4>Total HC: {totalBetHC.toFixed(2)} HC</h4>
+        </div>
+      </div>
       <p className="eth-donations">
         ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
       </p>
