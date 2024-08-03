@@ -182,7 +182,9 @@ const App: React.FC = () => {
         <p className="eth-donations">
           ETH donations: 0xd20fe36F1287D215a86FfdBe830BA6D5c5bFB297
         </p>
-        <h1>{mode === "pnl" ? "Calculate PnL" : "Calculate Price"}</h1>
+        <h1>
+          {mode === "pnl" ? "Calculate Profit and Loss" : "Calculate Price"}
+        </h1>
         <div className="mode-select">
           <label>
             <input
