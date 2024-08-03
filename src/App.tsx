@@ -203,12 +203,6 @@ const App: React.FC = () => {
             Calculate Price
           </label>
         </div>
-        <div className="buttons">
-          <button onClick={handleAddTransaction}>Add Item</button>
-          <button onClick={calculate}>Calculate</button>
-          <button onClick={() => clearTransactions(true)}>Clear List</button>
-          {mode === "pnl" && <button onClick={saveBet}>Save Bet</button>}
-        </div>
       </header>
       <div className="transaction-list">
         {transactions.map((transaction, index) => (
@@ -258,25 +252,47 @@ const App: React.FC = () => {
           </div>
         ))}
       </div>
+      <div className="transaction-buttons">
+        <button onClick={handleAddTransaction}>Add Item</button>
+        <button onClick={() => clearTransactions(true)}>Clear List</button>
+        {transactions.length > 0 && (
+          <>
+            <button onClick={calculate}>Calculate</button>
+            {mode === "pnl" && <button onClick={saveBet}>Save Bet</button>}
+          </>
+        )}
+      </div>
       {result !== null && (
         <h2>
           Your {mode === "pnl" ? "PnL" : "Price"} is: {result.toFixed(2)} HC
         </h2>
       )}
-      {mode === "pnl" && (
+      {mode === "pnl" && bets.length > 0 && (
         <div className="bets-list">
           <h3>Saved Bets</h3>
           <div className="bets-list-content">
             {bets.map((bet) => (
               <div key={bet.id} className="bet">
                 <div className="bet-info">
-                  <h4>Bet ID: {bet.id}</h4>
                   <p>Result: {bet.result.toFixed(2)} HC</p>
                   <ul>
                     {bet.transactions.map((transaction, index) => (
                       <li key={index}>
-                        {transaction.quantity} x {transaction.item} (
-                        {transaction.type})
+                        <div className="bet-transaction">
+                          <img
+                            src={
+                              items.find(
+                                (item) => item.name === transaction.item
+                              )?.image || DefaultImage
+                            }
+                            alt={transaction.item}
+                            className="item-image"
+                          />
+                          <span>
+                            {transaction.quantity} x {transaction.item} (
+                            {transaction.type})
+                          </span>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -293,17 +309,27 @@ const App: React.FC = () => {
           <div className="total-hc">
             <h4>Total HC: {totalBetHC.toFixed(2)} HC</h4>
           </div>
-          {bets.length > 0 && (
-            <button className="remove-all-bets" onClick={removeAllBets}>
-              Remove All Bets
-            </button>
-          )}
+          <button className="remove-all-bets" onClick={removeAllBets}>
+            Remove All Bets
+          </button>
         </div>
       )}
       <footer>
         <p>
           Prices calculated based on{" "}
-          <a href="https://traderclub.gg/">TraderClub.gg</a>
+          <a
+            href="https://traderclub.gg/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            TraderClub.gg
+          </a>
+        </p>
+        <p className="disclaimer">
+          habbocalc.xyz is not affiliated with, endorsed, sponsored, or
+          specifically approved by Sulake Oy or its Affiliates. habbocalc.xyz
+          may use the trademarks and other intellectual property of Habbo, which
+          is permitted under the Habbo Fan Site Policy.
         </p>
       </footer>
     </div>

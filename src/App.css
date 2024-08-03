@@ -6,8 +6,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  overflow-y: auto; /* Make the body scrollable */
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 .App {
@@ -15,43 +15,49 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  max-width: 1200px; /* Increase the width to make it wider */
-  min-width: 1000px; /* Set a minimum width to ensure it stays wide */
+  max-width: 90%; /* Use a percentage for responsiveness */
   width: 100%;
   text-align: center;
   margin: 20px;
-  min-height: 800px; /* Set a minimum height to prevent resizing */
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .transaction-list {
-  max-height: 400px; /* Set a max height for the transaction list */
-  overflow-y: auto; /* Make the transaction list scrollable */
-  margin-top: 20px; /* Add some space between the buttons and the transaction list */
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
 }
 
 .transaction {
   display: flex;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
   justify-content: center;
   align-items: center;
   margin: 10px 0;
+  gap: 10px; /* Add gap for better spacing */
 }
 
 .transaction select,
 .transaction input {
   margin: 0 10px;
+  flex: 1 1 150px; /* Flex properties for responsiveness */
 }
 
 .buttons {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
   gap: 10px;
-  margin-top: 20px; /* Add some space between the mode select and buttons */
+  margin-top: 20px;
 }
 
 .currency-selector {
@@ -63,14 +69,14 @@ header {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  width: 50px; /* Set fixed width */
-  height: 50px; /* Set fixed height */
+  width: 50px;
+  height: 50px;
 }
 
 .item-image {
-  width: 100%; /* Ensure image fits the container */
-  height: 100%; /* Ensure image fits the container */
-  object-fit: contain; /* Maintain aspect ratio and fit within the container */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .logo {
@@ -80,13 +86,13 @@ header {
 
 .made-by {
   margin-bottom: 5px;
-  font-size: 16px;
+  font-size: 14px;
   color: #555;
 }
 
 .eth-donations {
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 12px;
   color: #333;
 }
 
@@ -106,6 +112,9 @@ input {
   border: 1px solid #ccc;
   border-radius: 4px;
   margin: 0 10px;
+  width: calc(100% - 20px); /* Full width minus padding */
+  max-width: 200px; /* Maximum width for inputs */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 button {
@@ -115,7 +124,6 @@ button {
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  margin: 10px;
 }
 
 button:hover {
@@ -131,7 +139,8 @@ footer {
   margin-top: 20px;
   padding: 10px 0;
   border-top: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 footer a {
@@ -143,14 +152,21 @@ footer a:hover {
   text-decoration: underline;
 }
 
+.disclaimer {
+  font-size: 10px; /* Smaller font for the disclaimer */
+  color: #777; /* Lighter color for less emphasis */
+  margin-top: 10px;
+  text-align: center;
+}
+
 .bets-list {
   margin-top: 20px;
   text-align: left;
 }
 
 .bets-list-content {
-  max-height: 300px; /* Set a max height for the bets list */
-  overflow-y: auto; /* Make the bets list scrollable */
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .bet {
@@ -159,12 +175,13 @@ footer a:hover {
   padding: 10px;
   margin: 10px 0;
   display: flex;
+  flex-direction: column; /* Stack bet info and button */
   justify-content: space-between;
   align-items: center;
 }
 
 .bet-info {
-  flex-grow: 1;
+  width: 100%;
 }
 
 .bet h4,
@@ -189,7 +206,7 @@ footer a:hover {
   border-radius: 4px;
   color: white;
   cursor: pointer;
-  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .remove-bet:hover {
@@ -212,5 +229,25 @@ footer a:hover {
 
 .total-hc {
   text-align: center;
+  margin-top: 10px;
+}
+
+.bet-transaction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bet-transaction img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.transaction-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
+  gap: 10px;
   margin-top: 10px;
 }
